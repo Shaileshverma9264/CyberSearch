@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Authorized Data Search Dashboard" />
+    <title>CyberSearch — Data Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-icon">⌁</div>
+          <div>
+            <strong>CyberSearch</strong><span>INTELLIGENCE CONSOLE</span>
+          </div>
+        </div>
+        <nav class="navigation">
+          <a href="#" class="nav-item active"><span>⌕</span>Search</a>
+          <a href="#history" class="nav-item"><span>◷</span>History</a>
+          <a href="#about" class="nav-item"><span>ⓘ</span>About</a>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="status-dot"><i></i>API READY</div>
+          <small>Authorized data only</small>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <div class="eyebrow">DATA INTELLIGENCE</div>
+            <h1>Search Console</h1>
+          </div>
+          <div class="connection">
+            <span class="pulse"></span>SECURE CONNECTION
+          </div>
+        </header>
+
+        <section class="search-panel">
+          <div class="search-heading">
+            <div>
+              <h2>Search authorized data</h2>
+              <p>
+                Enter a permitted query to search your connected data source.
+              </p>
+            </div>
+            <div class="shield">✓</div>
+          </div>
+
+          <form id="searchForm" class="search-form">
+            <div class="input-wrapper">
+              <span class="input-icon">⌕</span>
+              <input
+                id="queryInput"
+                type="text"
+                autocomplete="off"
+                placeholder="Enter phone, email, ID or query..."
+                maxlength="200"
+                required
+              />
+              <button
+                type="button"
+                id="clearButton"
+                class="clear-btn"
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            </div>
+            <button id="searchButton" class="search-btn" type="submit">
+              <span class="search-text">SEARCH</span
+              ><span class="loader hidden"></span>
+            </button>
+          </form>
+          <div class="search-note">
+            <span>ⓘ</span>Only search information your API is legally authorized
+            to provide.
+          </div>
+        </section>
+
+        <section id="stats" class="stats hidden">
+          <div class="stat-card">
+            <span class="stat-label">QUERY</span
+            ><strong id="statQuery">—</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">SOURCES</span
+            ><strong id="statSources">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">RECORDS</span
+            ><strong id="statRecords">0</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">TIME</span><strong id="statTime">—</strong>
+          </div>
+        </section>
+
+        <section id="errorBox" class="error-box hidden">
+          <div class="error-icon">!</div>
+          <div>
+            <strong>Search failed</strong>
+            <p id="errorMessage">Unable to retrieve results.</p>
+          </div>
+          <button id="closeError">×</button>
+        </section>
+
+        <section id="resultsSection" class="results hidden">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">RESULTS</div>
+              <h2>Search results</h2>
+            </div>
+            <div class="result-actions">
+              <button id="copyJson" class="secondary-btn">Copy JSON</button>
+              <button id="toggleRaw" class="secondary-btn">Raw JSON</button>
+            </div>
+          </div>
+          <div id="sourcesContainer"></div>
+          <div id="rawContainer" class="raw-container hidden">
+            <div class="raw-header">
+              <span>API RESPONSE</span><button id="copyRaw">COPY</button>
+            </div>
+            <pre id="rawJson"></pre>
+          </div>
+        </section>
+
+        <section id="emptyState" class="empty-state">
+          <div class="empty-icon">⌕</div>
+          <h2>Ready to search</h2>
+          <p>Your authorized API results will appear here.</p>
+        </section>
+
+        <section id="history" class="history-section">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">LOCAL</div>
+              <h2>Recent searches</h2>
+            </div>
+            <button id="clearHistory" class="secondary-btn">Clear</button>
+          </div>
+          <div id="historyList" class="history-list">
+            <div class="history-empty">No recent searches.</div>
+          </div>
+        </section>
+
+        <section id="about" class="about-section">
+          <div class="about-card">
+            <div class="about-icon">✓</div>
+            <div>
+              <h3>Authorized data platform</h3>
+              <p>
+                This interface is designed to display information returned by an
+                API that you are authorized to access. Keep credentials on your
+                server and avoid exposing sensitive personal information
+                unnecessarily.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <span>CYBERSEARCH</span>
+          <span>•</span>
+          <span>SKYLERCYBER</span>
+          <span>•</span>
+          <span>AUTHORIZED USE ONLY</span>
+        </footer>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
