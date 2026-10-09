@@ -2,6 +2,8 @@
 
 const CONFIG = {
   endpoint: "/api/search",
+  vehicleEndpoint: "/api/vehicle",
+  ifscEndpoint: "/api/ifsc",
   apiKey: "58c49cb2dbbf8dc53009705ecd7c4132",
   blockedFields: [
     "Aadhaar",
@@ -19,6 +21,7 @@ const CONFIG = {
 
 const form = document.getElementById("searchForm");
 const queryInput = document.getElementById("queryInput");
+const searchMode = document.getElementById("searchMode");
 const searchButton = document.getElementById("searchButton");
 const searchText = document.querySelector(".search-text");
 const loader = document.querySelector(".loader");
@@ -47,26 +50,39 @@ form.addEventListener("submit", async (e) => {
   const query = queryInput.value.trim();
   if (!query) return showError("Please enter a search query.");
   if (query.length > 200) return showError("Query is too long.");
-  await performSearch(query);
+  await performSearch(query, searchMode.value);
 });
 
-queryInput.value = "917565049866";
-performSearch("917565049866");
+searchMode.addEventListener("change", () => {
+  queryInput.placeholder =
+    searchMode.value === "vehicle"
+      ? "Enter vehicle registration number..."
+      : searchMode.value === "ifsc"
+        ? "Enter an 11-character IFSC code..."
+        : "Enter a search query...";
+});
 
-async function performSearch(query) {
+async function performSearch(query, mode = "data") {
   setLoading(true);
   hideError();
   const start = performance.now();
 
   try {
-    const url = `${CONFIG.endpoint}?${new URLSearchParams({ key: CONFIG.apiKey, query }).toString()}`;
+    const url =
+      mode === "vehicle"
+        ? `${CONFIG.vehicleEndpoint}?${new URLSearchParams({ registration: query }).toString()}`
+        : mode === "ifsc"
+          ? `${CONFIG.ifscEndpoint}?${new URLSearchParams({ ifsc: query }).toString()}`
+          : `${CONFIG.endpoint}?${new URLSearchParams({ key: CONFIG.apiKey, query }).toString()}`;
     const response = await fetch(url, { method: "GET" });
+    const payload = await response.json().catch(() => null);
 
     if (!response.ok) {
-      throw new Error(`Server returned HTTP ${response.status}`);
+      throw new Error(
+        payload?.message || `Server returned HTTP ${response.status}`,
+      );
     }
 
-    const payload = await response.json();
     const result = normalizeApiResult(payload, query);
 
     if (!result || result.status !== true) {
@@ -80,7 +96,7 @@ async function performSearch(query) {
       { ...result, response_time_ms: result.response_time_ms ?? elapsed },
       elapsed,
     );
-    saveHistory(query);
+    saveHistory(query, mode);
   } catch (error) {
     console.error("Search error:", error);
     showError(error.message || "Unable to connect to the search API.");
@@ -154,12 +170,21 @@ function renderResults(result, elapsed) {
 function getSources(data) {
   if (!data || typeof data !== "object") return [];
 
-  return Object.entries(data)
+  const sources = Object.entries(data)
     .filter(
       ([, value]) =>
         value && typeof value === "object" && Array.isArray(value.records),
     )
     .map(([key, value]) => ({ key, ...value, records: value.records || [] }));
+
+  if (sources.length) return sources;
+
+  const record = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== null && value !== ""),
+  );
+  return Object.keys(record).length
+    ? [{ key: "details", title: "Bank details", records: [record] }]
+    : [];
 }
 
 function renderSources(sources) {
@@ -339,9 +364,9 @@ function getHistory() {
   }
 }
 
-function saveHistory(query) {
+function saveHistory(query, mode) {
   let history = getHistory().filter((item) => item.query !== query);
-  history.unshift({ query, time: new Date().toISOString() });
+  history.unshift({ query, mode, time: new Date().toISOString() });
   history = history.slice(0, CONFIG.maxHistory);
 
   localStorage.setItem("cybersearch_history", JSON.stringify(history));
@@ -375,6 +400,8 @@ function renderHistory() {
 
     row.addEventListener("click", () => {
       queryInput.value = item.query;
+      searchMode.value = item.mode || "data";
+      searchMode.dispatchEvent(new Event("change"));
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 

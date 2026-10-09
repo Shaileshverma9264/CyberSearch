@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Authorized Data Search Dashboard" />
+    <link rel="icon" href="data:," />
     <title>CyberSearch — Data Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -56,13 +57,18 @@
           </div>
 
           <form id="searchForm" class="search-form">
+            <select id="searchMode" aria-label="Search mode">
+              <option value="data">General search</option>
+              <option value="vehicle">Vehicle lookup</option>
+              <option value="ifsc">IFSC lookup</option>
+            </select>
             <div class="input-wrapper">
               <span class="input-icon">⌕</span>
               <input
                 id="queryInput"
                 type="text"
                 autocomplete="off"
-                placeholder="Enter phone, email, ID or query..."
+                placeholder="Enter a search query..."
                 maxlength="200"
                 required
               />
@@ -81,8 +87,9 @@
             </button>
           </form>
           <div class="search-note">
-            <span>ⓘ</span>Only search information your API is legally authorized
-            to provide.
+            <span>ⓘ</span>Only use data you are authorized to access. Vehicle
+            results omit owner contact and address details. IFSC lookup shows
+            bank and branch information.
           </div>
         </section>
 
